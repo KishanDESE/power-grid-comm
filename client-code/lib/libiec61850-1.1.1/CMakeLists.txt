@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 # automagically detect if we should cross-compile
 if(DEFINED ENV{TOOLCHAIN})
-    set(CMAKE_C_COMPILER	$ENV{TOOLCHAIN}gcc)
-    set(CMAKE_CXX_COMPILER	$ENV{TOOLCHAIN}g++)
-    set(CMAKE_AR	"$ENV{TOOLCHAIN}ar" CACHE FILEPATH "CW archiver" FORCE)
+    set(CMAKE_C_COMPILER    $ENV{TOOLCHAIN}gcc)
+    set(CMAKE_CXX_COMPILER  $ENV{TOOLCHAIN}g++)
+    set(CMAKE_AR    "$ENV{TOOLCHAIN}ar" CACHE FILEPATH "CW archiver" FORCE)
 endif()
 
 project(libiec61850)
@@ -24,7 +24,7 @@ check_library_exists(rt clock_gettime "time.h" CONFIG_SYSTEM_HAS_CLOCK_GETTIME)
 include (TestBigEndian)
 test_big_endian(PLATFORM_IS_BIGENDIAN)
 
-set(CONFIG_MMS_MAXIMUM_PDU_SIZE "65000" CACHE STRING "Configure the maximum size of an MMS PDU (default 65000)"   )
+set(CONFIG_MMS_MAXIMUM_PDU_SIZE "65000" CACHE STRING "Configure the maximum size of an MMS PDU (default 65000)")
 set(CONFIG_MAXIMUM_TCP_CLIENT_CONNECTIONS 5 CACHE STRING "Configure the maximum number of clients allowed to connect to the server")
 
 option(BUILD_EXAMPLES "Build the examples" ON)
@@ -41,7 +41,7 @@ option(CONFIG_IEC61850_REPORT_SERVICE "Build with support for IEC 61850 reportin
 option(CONFIG_IEC61850_LOG_SERVICE "Build with support for IEC 61850 logging services" ON)
 option(CONFIG_IEC61850_SETTING_GROUPS "Build with support for IEC 61850 setting group services" ON)
 
-set(CONFIG_REPORTING_DEFAULT_REPORT_BUFFER_SIZE "8000" CACHE STRING "Default buffer size for buffered reports in byte" )
+set(CONFIG_REPORTING_DEFAULT_REPORT_BUFFER_SIZE "8000" CACHE STRING "Default buffer size for buffered reports in byte")
 
 # advanced options
 option(DEBUG "Enable debugging mode (include assertions)" OFF)
@@ -54,7 +54,7 @@ option(DEBUG_IED_CLIENT "Enable IED CLIENT printf debugging" OFF)
 option(DEBUG_MMS_SERVER "Enable MMS SERVER printf debugging" OFF)
 option(DEBUG_MMS_CLIENT "Enable MMS CLIENT printf debugging" OFF)
 #mark_as_advanced(DEBUG DEBUG_COTP DEBUG_ISO_SERVER DEBUG_ISO_CLIENT DEBUG_IED_SERVER
-#				 DEBUG_IED_CLIENT DEBUG_MMS_SERVER DEBUG_MMS_CLIENT)
+#                DEBUG_IED_CLIENT DEBUG_MMS_SERVER DEBUG_MMS_CLIENT)
 
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/config
@@ -115,6 +115,11 @@ if(MSVC)
     )
 endif(MSVC)
 
+# Set compiler flags for Position Independent Code
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 # write the detected stuff to this file
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/config/stack_config.h.cmake
@@ -126,6 +131,9 @@ if(BUILD_EXAMPLES)
 endif(BUILD_EXAMPLES)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src)
+
+# Link with Position Independent Executable flags
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fPIE -pie")
 
 install(FILES ${API_HEADERS} DESTINATION include/libiec61850 COMPONENT Development)
 
