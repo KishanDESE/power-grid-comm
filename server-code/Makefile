@@ -9,6 +9,10 @@ PROJECT_ICD_FILE = OSU_SS1.scd
 include $(LIBIEC_HOME)/make/target_system.mk
 include $(LIBIEC_HOME)/make/stack_includes.mk
 
+# Add -fPIC to CFLAGS and -fPIE -pie to LDFLAGS
+CFLAGS += -fPIC
+LDFLAGS += -fPIE -pie
+
 all:	$(PROJECT_BINARY_NAME)
 
 include $(LIBIEC_HOME)/make/common_targets.mk
