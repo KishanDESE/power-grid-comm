@@ -115,6 +115,11 @@ if(MSVC)
     )
 endif(MSVC)
 
+# Set compiler flags for Position Independent Code
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 # write the detected stuff to this file
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/config/stack_config.h.cmake
