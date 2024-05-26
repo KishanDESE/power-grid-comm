@@ -9,16 +9,19 @@ PROJECT_ICD_FILE = OSU_CC1.scd
 include $(LIBIEC_HOME)/make/target_system.mk
 include $(LIBIEC_HOME)/make/stack_includes.mk
 
-all:	$(PROJECT_BINARY_NAME)
+# Add -fPIC to CFLAGS and -fPIE -pie to LDFLAGS
+CFLAGS += -fPIC
+LDFLAGS += -fPIE -pie
+
+all: $(PROJECT_BINARY_NAME)
 
 include $(LIBIEC_HOME)/make/common_targets.mk
 
-model:	$(PROJECT_ICD_FILE)
-	java -jar $(LIBIEC_HOME)/tools/model_generator/genmodel.jar $(PROJECT_ICD_FILE)
+model: $(PROJECT_ICD_FILE)
+		java -jar $(LIBIEC_HOME)/tools/model_generator/genmodel.jar $(PROJECT_ICD_FILE)
 
-$(PROJECT_BINARY_NAME):	$(PROJECT_SOURCES) $(LIB_NAME)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROJECT_BINARY_NAME) $(PROJECT_SOURCES) $(INCLUDES) $(LIB_NAME) $(LDFLAGS) $(LDLIBS)
+$(PROJECT_BINARY_NAME): $(PROJECT_SOURCES) $(LIB_NAME)
+		$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROJECT_BINARY_NAME) $(PROJECT_SOURCES) $(INCLUDES) $(LIB_NAME) $(LDLIBS)
 
 clean:
-	rm -f $(PROJECT_BINARY_NAME)
-
+		rm -f $(PROJECT_BINARY_NAME)
